@@ -54,7 +54,6 @@ def displayVideos(videoList):
     for x, video in enumerate(videos):
         print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'])
 
-    ch = input('Enter Choice: ')
 
 
 if len(sys.argv) == 1:
@@ -69,9 +68,8 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
         listOfChannels = file.readlines()
         for channel in listOfChannels:
             getVideos(channel)
-    for x, video in enumerate(videos):
-        print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'])
 
+    displayVideos(videos)
     ch = input('Enter Choice: ')
     playVideo(ch)
 
@@ -93,4 +91,5 @@ else:
                 break
 
     displayVideos(videos)
+    ch = input('Enter Choice: ')
     playVideo(ch)
