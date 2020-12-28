@@ -75,13 +75,14 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
 
 
 else:
-
-    if sys.argv[1] != int:
+    try:
+        number = int(sys.argv[1])
+        searchQuery = sys.argv[2]
+    except:
+        print("Number of results not provided. Defaulting to 5...")
         number = 5
         searchQuery = sys.argv[1]
-    else:
-        searchQuery = sys.argv[2]
-        number = int(sys.argv[1])
+
 
     search = uyts.Search(searchQuery)
     for res in search.results:
