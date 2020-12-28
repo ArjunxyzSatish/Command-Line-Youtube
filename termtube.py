@@ -64,7 +64,7 @@ elif sys.argv[1] == '-h' or sys.argv[1] == '--help':
 
 elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
     subfile = sys.argv[2]
-    print("Looking for videos from channels in 'sublist' file..")
+    print("Looking for videos from channels in '" + subfile + "' file..")
     with open(subfile, 'r') as file:
         listOfChannels = file.readlines()
         for channel in listOfChannels:
