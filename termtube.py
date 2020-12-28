@@ -69,6 +69,7 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
         for channel in listOfChannels:
             getVideos(channel)
 
+    print("Looking for videos from channels in 'sublist' file..")
     displayVideos(videos)
     ch = input('Enter Choice: ')
     playVideo(ch)
