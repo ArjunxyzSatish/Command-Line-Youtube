@@ -1,6 +1,7 @@
 #!/bin/env python
 
 import uyts
+import youtube_dl
 import requests
 from bs4 import BeautifulSoup
 import mpv
@@ -18,14 +19,45 @@ def help():
      -h, --help             prints this help message
       n                     where n is the number of video results you want displayed
      -f, --file             specify the file with the list of channels on it and it fetches the 3 most recent videos of these channels.
+     -d, --download         This option gives you a list of 10 videos based on your query and lets you pick one to download.
      -rss, --get-rss        specify the file with the list of channels on it and it fetches the RSS links of these channels and stores them in another file. It will ask you to name this new file.
 
     Query:
      This is what the script looks for on YouTube. Please enter it in quotes, eg. 'Messi vs Ronaldo'
 
     Channel List:
-     This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel. If this is used with the -rss or --get-rss option, it gets the RSS links of these channels and stores them in a new file in the same directory. It will ask you to name the new file containing the RSS links of these channels. 
+     This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel. If this is used with the -rss or --get-rss option, it gets the RSS links of these channels and stores them in a new file in the same directory. It will ask you to name the new file containing the RSS links of these channels.
 """)
+
+def downloadVideo(choice):
+## YouTube downloader options
+    '''
+    ydl_opts = {
+        'format': 'bestvideo/best',
+        'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            },
+                {'key': 'FFmpegMetadata'},
+            ],
+    }
+    '''
+
+    chosenVideo = videos[int(choice) - 1]
+    url = chosenVideo['url']
+
+    ydl_opts = {
+    'format': 'best',
+    'outtmpl': chosenVideo['title'],
+    'noplaylist' : True,
+    #'progress_hooks': [my_hook],
+}
+
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(url, download=True)
+
 
 def getRSS(channelFile):
     RSSlinks = []
@@ -97,6 +129,22 @@ elif sys.argv[1] == '-rss' or sys.argv[1] == '--get-rss':
     with open(RSSfile, 'a') as file:
         for channel in RSSlinks:
             file.writelines(channel['creator'] + " : " + channel['link'] + "\n")
+
+elif sys.argv[1] == '-d' or sys.argv[1] == '--download':
+
+    searchQuery = sys.argv[2]
+    number = 10
+
+    search = uyts.Search(searchQuery)
+    for res in search.results:
+        if res.resultType == 'video':
+            videos.append({'title':res.title, 'url':'https://www.youtube.com/watch?v='+res.id, 'creator': res.author})
+            if len(videos) == number:
+                break
+
+    displayVideos(videos)
+    ch = input('Enter Choice: ')
+    downloadVideo(ch)
 
 
 else:
