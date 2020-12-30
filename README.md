@@ -16,7 +16,7 @@ It uses the `python-mpv` library to do this. There is also an option in the scri
 
 More features will be added soon!
 
-#Examples:
+# Examples:
 
 `termtube 3 'call me kevin'`     This prints out 5 videos with the query 'call me kevin' and asks you which one you want to play. If the number isn't specified, it prints out 5 videos. The max is 18.
 
