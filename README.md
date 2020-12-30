@@ -16,6 +16,17 @@ It uses the `python-mpv` library to do this. There is also an option in the scri
 
 More features will be added soon!
 
+#Examples:
+`termtube 3 'call me kevin'`     This prints out 5 videos with the query 'call me kevin' and asks you which one you want to play. If the number isn't specified, it prints out 5 videos. The max is 18.
+
+`termtube -f sublist`           This prints out the latest 3 videos from the channels in the file 'subfile' and asks you which one you want to play.
+
+`termtube -d 'call me kevin'`    This prints out videos with the query 'call me kevin' adn asks you which one you want to download.
+
+`termtube -p 'call me kevin'`    This prints out playlists for you to download.
+
+`termtube -rss sublist`          This gets rss feed links for all the channels in the file 'subfile'
+
 # Donations
 Consider Donating if you're feeling generous :)
 [![PayPal Donation Link](blue.svg "PayPal Donation Link")](https://www.paypal.me/feedmeplsthx)

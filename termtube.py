@@ -27,7 +27,20 @@ def help():
      This is what the script looks for on YouTube. Please enter it in quotes, eg. 'Messi vs Ronaldo'
 
     Channel List:
-     This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel. If this is used with the -rss or --get-rss option, it gets the RSS links of these channels and stores them in a new file in the same directory. It will ask you to name the new file containing the RSS links of these channels.
+     This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel.
+
+     If this is used with the -rss or --get-rss option, it gets the RSS links of these channels and stores them in a new file in the same directory. It will ask you to name the new file containing the RSS links of these channels.
+
+     Examples:
+     termtube 3 'call me kevin'     This prints out 5 videos with the query 'call me kevin' and asks you which one you want to play. If the number isn't specified, it prints out 5 videos. The max is 18.
+
+     termtube -f sublist            This prints out the latest 3 videos from the channels in the file 'subfile' and asks you which one you want to play.
+
+     termtube -d 'call me kevin'    This prints out videos with the query 'call me kevin' adn asks you which one you want to download.
+
+     termtube -p 'call me kevin'    This prints out playlists for you to download.
+
+     termtube -rss sublist          This gets rss feed links for all the channels in the file 'subfile'
 """)
 
 def playlistSearch(query, num):
@@ -79,7 +92,7 @@ def getRSS(channelFile):
                     break
     return RSSlinks
 
-def getVideosFromChannel(channel):
+def getVideosFromChannel(channel, num):
     search = uyts.Search(channel)
     for res in search.results:
         if res.resultType == 'channel':
@@ -91,7 +104,8 @@ def getVideosFromChannel(channel):
     html = requests.get(url)
     soup = BeautifulSoup(html.text, "lxml")
     entries = soup.find_all("entry")
-    for i in range(3):
+    number = int(num)
+    for i in range(number):
         videos.append({"title":entries[i].title.text, "url":entries[i].link.attrs["href"], "creator": channelName})
 
 def playVideo(choice):
@@ -101,9 +115,13 @@ def playVideo(choice):
     player.play(chosenVideoLink)
     player.wait_for_playback()
 
-def display(videoList):
-    for x, video in enumerate(videos):
-        print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'] + " (" + videos[x]['length'] + ")")
+def display(videoList, flag):
+    if flag == '-c' or '--channel' or '-f' or '--file':
+        for x, video in enumerate(videos):
+            print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'])
+    else:
+        for x, video in enumerate(videos):
+            print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'] + " (" + videos[x]['length'] + ")")
 
 
 if len(sys.argv) == 1:
@@ -118,9 +136,9 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
     with open(subfile, 'r') as file:
         listOfChannels = file.readlines()
         for channel in listOfChannels:
-            getVideosFromChannel(channel)
+            getVideosFromChannel(channel, 3)
 
-    display(videos)
+    display(videos, sys.argv[1])
     ch = input('Enter Choice: ')
     playVideo(ch)
 
@@ -136,25 +154,33 @@ elif sys.argv[1] == '-rss' or sys.argv[1] == '--get-rss':
 elif sys.argv[1] == '-d' or sys.argv[1] == '--download':
 
     searchQuery = sys.argv[2]
-    number = 10
+    number = input("Enter the number of videos you want to get back: (max: 18)")
 
     videoSearch(searchQuery, number)
 
-    display(videos)
+    display(videos, sys.argv[1])
     ch = input('Enter Choice: ')
     downloadVideo(ch)
 
 elif sys.argv[1] == '-p' or sys.argv[1] == '--playlist':
 
     searchQuery = sys.argv[2]
-    number = 10
+    number = input("Enter the number of playlists you want to get back: (max: 15)")
 
     playlistSearch(searchQuery, number)
 
-    display(videos)
+    display(videos, sys.argv[1])
     ch = input('Enter Choice: ')
     downloadVideo(ch)
 
+elif sys.argv[1] == '-c' or sys.argv[1] == '--channel':
+    searchQuery = sys.argv[2]
+    number = input("Enter the number of videos you want to get back: (max: 15)")
+    getVideosFromChannel(searchQuery, number)
+
+    display(videos, sys.argv[1])
+    ch = input("Enter choice: ")
+    playVideo(ch)
 
 else:
     try:
@@ -167,6 +193,6 @@ else:
 
     videoSearch(searchQuery, number)
 
-    display(videos)
+    display(videos, sys.argv[1])
     ch = input('Enter Choice: ')
     playVideo(ch)
