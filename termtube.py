@@ -20,6 +20,7 @@ def help():
       n                     where n is the number of video results you want displayed
      -f, --file             specify the file with the list of channels on it and it fetches the 3 most recent videos of these channels.
      -d, --download         This option gives you a list of 10 videos based on your query and lets you pick one to download.
+     -p, --playlist         This option gives you a list of playlists based on your query and lets you pick one to download.
      -rss, --get-rss        specify the file with the list of channels on it and it fetches the RSS links of these channels and stores them in another file. It will ask you to name this new file.
 
     Query:
@@ -29,31 +30,36 @@ def help():
      This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel. If this is used with the -rss or --get-rss option, it gets the RSS links of these channels and stores them in a new file in the same directory. It will ask you to name the new file containing the RSS links of these channels.
 """)
 
-def downloadVideo(choice):
-## YouTube downloader options
-    '''
-    ydl_opts = {
-        'format': 'bestvideo/best',
-        'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            },
-                {'key': 'FFmpegMetadata'},
-            ],
-    }
-    '''
+def playlistSearch(query, num):
+    search = uyts.Search(query)
+    for res in search.results:
+        if res.resultType == 'playlist':
+            videos.append({'title':res.title, 'url':'https://www.youtube.com/playlist?list='+res.id, 'creator': res.author, "length":res.length, 'type':res.resultType})
+            if len(videos) == num:
+                break
 
+def videoSearch(query, num):
+    search = uyts.Search(query)
+    for res in search.results:
+        if res.resultType == 'video':
+            videos.append({'title':res.title, 'url':'https://www.youtube.com/watch?v='+res.id, 'creator': res.author, "length":res.duration, "type":res.resultType})
+            if len(videos) == num:
+                break
+
+def downloadVideo(choice):
     chosenVideo = videos[int(choice) - 1]
     url = chosenVideo['url']
 
-    ydl_opts = {
-    'format': 'best',
-    'outtmpl': chosenVideo['title'],
-    'noplaylist' : True,
-    #'progress_hooks': [my_hook],
-}
+    if chosenVideo['type'] == 'playlist':
+        ydl_opts = {
+        'format': 'best',
+    }
 
+    else:
+        ydl_opts = {
+        'format': 'best',
+        'outtmpl': chosenVideo['title'],
+    }
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(url, download=True)
@@ -73,7 +79,7 @@ def getRSS(channelFile):
                     break
     return RSSlinks
 
-def getVideos(channel):
+def getVideosFromChannel(channel):
     search = uyts.Search(channel)
     for res in search.results:
         if res.resultType == 'channel':
@@ -88,7 +94,6 @@ def getVideos(channel):
     for i in range(3):
         videos.append({"title":entries[i].title.text, "url":entries[i].link.attrs["href"], "creator": channelName})
 
-
 def playVideo(choice):
     chosenVideo = videos[int(choice) - 1]
     print("Playing: " + chosenVideo['title'])
@@ -96,11 +101,9 @@ def playVideo(choice):
     player.play(chosenVideoLink)
     player.wait_for_playback()
 
-
-def displayVideos(videoList):
+def display(videoList):
     for x, video in enumerate(videos):
-        print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'])
-
+        print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'] + " (" + videos[x]['length'] + ")")
 
 
 if len(sys.argv) == 1:
@@ -115,9 +118,9 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
     with open(subfile, 'r') as file:
         listOfChannels = file.readlines()
         for channel in listOfChannels:
-            getVideos(channel)
+            getVideosFromChannel(channel)
 
-    displayVideos(videos)
+    display(videos)
     ch = input('Enter Choice: ')
     playVideo(ch)
 
@@ -135,14 +138,20 @@ elif sys.argv[1] == '-d' or sys.argv[1] == '--download':
     searchQuery = sys.argv[2]
     number = 10
 
-    search = uyts.Search(searchQuery)
-    for res in search.results:
-        if res.resultType == 'video':
-            videos.append({'title':res.title, 'url':'https://www.youtube.com/watch?v='+res.id, 'creator': res.author})
-            if len(videos) == number:
-                break
+    videoSearch(searchQuery, number)
 
-    displayVideos(videos)
+    display(videos)
+    ch = input('Enter Choice: ')
+    downloadVideo(ch)
+
+elif sys.argv[1] == '-p' or sys.argv[1] == '--playlist':
+
+    searchQuery = sys.argv[2]
+    number = 10
+
+    playlistSearch(searchQuery, number)
+
+    display(videos)
     ch = input('Enter Choice: ')
     downloadVideo(ch)
 
@@ -156,14 +165,8 @@ else:
         number = 5
         searchQuery = sys.argv[1]
 
+    videoSearch(searchQuery, number)
 
-    search = uyts.Search(searchQuery)
-    for res in search.results:
-        if res.resultType == 'video':
-            videos.append({'title':res.title, 'url':'https://www.youtube.com/watch?v='+res.id, 'creator': res.author})
-            if len(videos) == number:
-                break
-
-    displayVideos(videos)
+    display(videos)
     ch = input('Enter Choice: ')
     playVideo(ch)

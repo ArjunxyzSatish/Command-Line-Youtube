@@ -8,6 +8,8 @@ This script now also gives you a personalised feed of youtube videos. It reads t
 
 To download videos with this script, use the `-d` option. Check the help menu for more details.
 
+Playlists can be downloaded using the `-p` option. Check the help menu for more details.
+
 To get RSS links for your favourite channels, use the `-rss` option.
 
 It uses the `python-mpv` library to do this. There is also an option in the script that lets you use the already installed `mpv` in your system which has been commented out. It also uses the `youtube-search` library. Take a look at the script to know what you need to have installed before you can run it.
