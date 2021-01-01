@@ -115,13 +115,13 @@ def playVideo(choice):
     player.play(chosenVideoLink)
     player.wait_for_playback()
 
-def display(videoList, flag):
-    if flag == '-c' or '--channel' or '-f' or '--file':
-        for x, video in enumerate(videos):
-            print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'])
-    else:
-        for x, video in enumerate(videos):
-            print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'] + " (" + videos[x]['length'] + ")")
+def display(videoList):
+    for x, video in enumerate(videos):
+        print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'] + " (" + videos[x]['length'] + ")")
+
+def displayScraped(videoList):
+    for x, video in enumerate(videos):
+        print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'])
 
 
 if len(sys.argv) == 1:
@@ -138,7 +138,7 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
         for channel in listOfChannels:
             getVideosFromChannel(channel, 3)
 
-    display(videos, sys.argv[1])
+    displayScraped(videos)
     ch = input('Enter Choice: ')
     playVideo(ch)
 
@@ -154,31 +154,31 @@ elif sys.argv[1] == '-rss' or sys.argv[1] == '--get-rss':
 elif sys.argv[1] == '-d' or sys.argv[1] == '--download':
 
     searchQuery = sys.argv[2]
-    number = input("Enter the number of videos you want to get back: (max: 18)")
+    number = input("Enter the number of videos you want to get back (max: 18): ")
 
     videoSearch(searchQuery, number)
 
-    display(videos, sys.argv[1])
+    display(videos)
     ch = input('Enter Choice: ')
     downloadVideo(ch)
 
 elif sys.argv[1] == '-p' or sys.argv[1] == '--playlist':
 
     searchQuery = sys.argv[2]
-    number = input("Enter the number of playlists you want to get back: (max: 15)")
+    number = input("Enter the number of playlists you want to get back (max: 15): ")
 
     playlistSearch(searchQuery, number)
 
-    display(videos, sys.argv[1])
+    display(videos)
     ch = input('Enter Choice: ')
     downloadVideo(ch)
 
 elif sys.argv[1] == '-c' or sys.argv[1] == '--channel':
     searchQuery = sys.argv[2]
-    number = input("Enter the number of videos you want to get back: (max: 15)")
+    number = input("Enter the number of videos you want to get back (max: 15): ")
     getVideosFromChannel(searchQuery, number)
 
-    display(videos, sys.argv[1])
+    displayScraped(videos)
     ch = input("Enter choice: ")
     playVideo(ch)
 
@@ -193,6 +193,6 @@ else:
 
     videoSearch(searchQuery, number)
 
-    display(videos, sys.argv[1])
+    display(videos)
     ch = input('Enter Choice: ')
     playVideo(ch)
