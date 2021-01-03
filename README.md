@@ -28,6 +28,15 @@ More features will be added soon!
 
 `termtube -rss sublist`          This gets rss feed links for all the channels in the file 'subfile'
 
+# Requirements
+
+### Python Libraries
+	- uyts : `pip install unlimited-youtube-search` This is a pretty big library but it makes searching youtube a lot better than any of the other ones.
+	- youtube_dl : `pip install youtube_dl` This is what helps with downloading the videos.
+	- requests : `pip install requests`
+	- bs4 : `pip install beautifulsoup4`
+	- mpv : `pip install python-mpv` This is what plays the videos
+
 # Donations
 Consider Donating if you're feeling generous :)
 [![PayPal Donation Link](blue.svg "PayPal Donation Link")](https://www.paypal.me/feedmeplsthx)
