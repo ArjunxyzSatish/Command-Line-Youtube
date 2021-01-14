@@ -29,7 +29,7 @@ def help():
      This is what the script looks for on YouTube. Please enter it in quotes, eg. 'Messi vs Ronaldo'
 
     Channel List:
-     This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel.
+     This is the file containing the names of the channels whose videos you want in your feed. Make sure you have only one channel per line. The program prints the latest 3 videos for each channel. Comments can be added in this file with '#'.
 
      If this is used with the -rss or --get-rss option, it gets the RSS links of these channels and stores them in a new file in the same directory. It will ask you to name the new file containing the RSS links of these channels.
 
@@ -85,12 +85,13 @@ def getRSS(channelFile):
     with open(channelFile, 'r') as file:
         listOfChannels = file.readlines()
         for channel in listOfChannels:
-            search = uyts.Search(channel)
-            for res in search.results:
-                if res.resultType == 'channel':
-                    channelID = res.id
-                    channelName = res.title
-                    RSSlinks.append({"creator":channelName, "link":"https://www.youtube.com/feeds/videos.xml?channel_id="+channelID})
+            if channel[0] != '#':
+                search = uyts.Search(channel)
+                for res in search.results:
+                    if res.resultType == 'channel':
+                        channelID = res.id
+                        channelName = res.title
+                        RSSlinks.append({"creator":channelName, "link":"https://www.youtube.com/feeds/videos.xml?channel_id="+channelID})
                     break
     return RSSlinks
 
@@ -144,7 +145,8 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
     with open(subfile, 'r') as file:
         listOfChannels = file.readlines()
         for channel in listOfChannels:
-            getVideosFromChannel(channel, 3)
+            if channel[0] != '#':
+                getVideosFromChannel(channel, 3)
 
     displayScraped(videos)
     ch = input('Enter Choice: ')

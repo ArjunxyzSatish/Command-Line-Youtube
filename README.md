@@ -4,7 +4,7 @@ Clone the directory and run `./termtube.py -h` from the TermTube directory to ge
 
 This is a script that lets you watch Youtube videos on the command line!
 
-This script now also gives you a personalised feed of youtube videos. It reads the channel names from a list that you pass as a variable and prints out the 3 latest videos of each channel. Use the `-f 'channel-list'` option to use this option. Make sure that the 'channel-list' file exists in the directory you're running the script from.
+This script now also gives you a personalised feed of youtube videos. It reads the channel names from a list that you pass as a argument and prints out the 3 latest videos of each channel. Use the `-f <channel-list>` option, and replace `<channel-list>` with the name of the file with the list of channels, to use this. Make sure that the 'channel-list' file exists in the directory you're running the script from. You can add comments to this file by adding `#` at the start of a line.
 
 To download videos with this script, use the `-d` option. Check the help menu for more details.
 
