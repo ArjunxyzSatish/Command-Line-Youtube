@@ -1,5 +1,6 @@
 #!/bin/env python
 
+import pyperclip
 import uyts
 import youtube_dl
 import requests
@@ -18,6 +19,7 @@ def help():
     Options:
      -h, --help             prints this help message
       n                     where n is the number of video results you want displayed
+     -l, --link             copies the link of the youtube video to your clipboard
      -f, --file             specify the file with the list of channels on it and it fetches the 3 most recent videos of these channels.
      -d, --download         This option gives you a list of 10 videos based on your query and lets you pick one to download.
      -p, --playlist         This option gives you a list of playlists based on your query and lets you pick one to download.
@@ -115,6 +117,12 @@ def playVideo(choice):
     player.play(chosenVideoLink)
     player.wait_for_playback()
 
+def getLink(choice):
+    chosenVideo = videos[int(choice) - 1]
+    chosenVideoLink = chosenVideo['url']
+    pyperclip.copy(chosenVideoLink)
+    print('The chosen link has been copied to the clipboard')
+
 def display(videoList):
     for x, video in enumerate(videos):
         print(f'{x+1}. ' + videos[x]['title'] + ' : ' + videos[x]['creator'] + " (" + videos[x]['length'] + ")")
@@ -140,6 +148,7 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
 
     displayScraped(videos)
     ch = input('Enter Choice: ')
+    getLink(ch)
     playVideo(ch)
 
 elif sys.argv[1] == '-rss' or sys.argv[1] == '--get-rss':
@@ -181,6 +190,18 @@ elif sys.argv[1] == '-c' or sys.argv[1] == '--channel':
     displayScraped(videos)
     ch = input("Enter choice: ")
     playVideo(ch)
+
+elif sys.argv[1] == '-l' or sys.argv[1] == '--link':
+
+    searchQuery = sys.argv[2]
+    number = input("Enter the number of videos you want to get back (max: 15): ")
+
+    videoSearch(searchQuery, number)
+
+    display(videos)
+    ch = input('Enter Choice: ')
+    getLink(ch)
+
 
 else:
     try:
