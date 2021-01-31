@@ -1,6 +1,6 @@
-#!/bin/env python
+#!/bin/env python3
 
-import pyperclip
+import os
 import uyts
 import youtube_dl
 import requests
@@ -44,6 +44,7 @@ def help():
 
      termtube -rss sublist          This gets rss feed links for all the channels in the file 'subfile'
 """)
+
 
 def playlistSearch(query, num):
     search = uyts.Search(query)
@@ -121,8 +122,15 @@ def playVideo(choice):
 def getLink(choice):
     chosenVideo = videos[int(choice) - 1]
     chosenVideoLink = chosenVideo['url']
-    pyperclip.copy(chosenVideoLink)
-    print('The chosen link has been copied to the clipboard')
+    if sys.platform == 'linux':
+        cmd = "echo "+chosenVideoLink+" | xclip -sel clip"
+        os.system(cmd)
+
+    elif sys.platform == 'darwin':
+        cmd = "echo "+chosenVideoLink+" | pbcopy -sel clip"
+        os.system(cmd)
+
+    print("The chosen video's link has been copied to the system clipboard")
 
 def display(videoList):
     for x, video in enumerate(videos):
@@ -203,7 +211,6 @@ elif sys.argv[1] == '-l' or sys.argv[1] == '--link':
     display(videos)
     ch = input('Enter Choice: ')
     getLink(ch)
-
 
 else:
     try:
