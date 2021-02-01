@@ -130,6 +130,10 @@ def getLink(choice):
         cmd = "echo "+chosenVideoLink+" | pbcopy -sel clip"
         os.system(cmd)
 
+    elif sys.platform == 'win32':
+        cmd = "echo "+chosenVideoLink+" | clip"
+        os.system(cmd)
+
     print("The chosen video's link has been copied to the system clipboard")
 
 def display(videoList):
@@ -158,7 +162,10 @@ elif sys.argv[1] == '-f' or sys.argv[1] == '--file':
 
     displayScraped(videos)
     ch = input('Enter Choice: ')
-    getLink(ch)
+    try:
+        getLink(ch)
+    except:
+        print("Couldn't copy the link to clipboard. Make sure you have the right command line tools installed. You can check what tools this script uses for your OS in the help menu.")
     playVideo(ch)
 
 elif sys.argv[1] == '-rss' or sys.argv[1] == '--get-rss':
@@ -210,7 +217,10 @@ elif sys.argv[1] == '-l' or sys.argv[1] == '--link':
 
     display(videos)
     ch = input('Enter Choice: ')
-    getLink(ch)
+    try:
+        getLink(ch)
+    except:
+        print("Couldn't copy the link to clipboard. Make sure you have the right command line tools installed. You can check what tools this script uses for your OS in the help menu.")
 
 else:
     try:
